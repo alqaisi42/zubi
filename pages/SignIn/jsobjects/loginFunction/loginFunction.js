@@ -19,7 +19,7 @@ export default {
         storeValue("currentUser", getUserByUsername.data[0]);
         storeValue("isLoggedIn", true);
         storeValue("loginLoading", false);
-        navigateTo("MainPage", {}, "SAME_WINDOW");
+        navigateTo("Lawyers", {}, "SAME_WINDOW");
       } else {
         storeValue("loginLoading", false);
         showAlert("Invalid password", "error");
