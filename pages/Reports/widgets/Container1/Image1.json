@@ -1,7 +1,7 @@
 {
   "animateLoading": true,
   "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
-  "bottomRow": 7,
+  "bottomRow": 11,
   "boxShadow": "none",
   "defaultImage": "https://back.zubilaw.com/uploads/1725438840979.png",
   "dynamicBindingPathList": [
@@ -33,7 +33,7 @@
   "parentRowSpace": 10,
   "renderMode": "CANVAS",
   "rightColumn": 63,
-  "topRow": 0,
+  "topRow": 4,
   "type": "IMAGE_WIDGET",
   "version": 1,
   "widgetId": "mepxw1aot9",

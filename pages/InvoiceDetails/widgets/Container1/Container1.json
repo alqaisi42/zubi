@@ -3,7 +3,7 @@
   "backgroundColor": "",
   "borderColor": "#f8fafc",
   "borderWidth": "1",
-  "bottomRow": 283,
+  "bottomRow": 300,
   "bottomRowBeforeCollapse": 283,
   "boxShadow": "none",
   "children": [
@@ -83,7 +83,7 @@
     "Layout"
   ],
   "thumbnailSVG": "/static/media/thumbnail.6cb355b93146b5347bbb048a568ed446.svg",
-  "topRow": 169,
+  "topRow": 186,
   "topRowBeforeCollapse": 169,
   "type": "CONTAINER_WIDGET",
   "version": 1,

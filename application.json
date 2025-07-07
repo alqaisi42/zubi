@@ -1,7 +1,7 @@
 {
   "appIsExample": false,
   "appLayout": {
-    "type": "DESKTOP"
+    "type": "FLUID"
   },
   "applicationDetail": {
     "navigationSetting": {
@@ -33,10 +33,6 @@
     {
       "id": "SignIn",
       "isDefault": true
-    },
-    {
-      "id": "MainPage",
-      "isDefault": false
     },
     {
       "id": "Lawyers",
@@ -80,7 +76,7 @@
     }
   ],
   "unpublishedAppLayout": {
-    "type": "DESKTOP"
+    "type": "FLUID"
   },
   "unpublishedApplicationDetail": {
     "navigationSetting": {
