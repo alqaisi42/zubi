@@ -1,0 +1,82 @@
+{
+  "accentColor": "{{appsmith.theme.colors.primaryColor}}",
+  "animateLoading": false,
+  "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
+  "bottomRow": 7,
+  "boxShadow": "none",
+  "defaultOptionValue": "{{ ((options, serverSideFiltering) => (  \nclientDropdownHelpers.getDefaultClientId.data\n))(ClientDropDown.options, ClientDropDown.serverSideFiltering) }}",
+  "dynamicBindingPathList": [
+    {
+      "key": "accentColor"
+    },
+    {
+      "key": "borderRadius"
+    },
+    {
+      "key": "isDisabled"
+    },
+    {
+      "key": "sourceData"
+    },
+    {
+      "key": "defaultOptionValue"
+    }
+  ],
+  "dynamicHeight": "FIXED",
+  "dynamicPropertyPathList": [
+    {
+      "key": "sourceData"
+    },
+    {
+      "key": "onOptionChange"
+    },
+    {
+      "key": "isDisabled"
+    }
+  ],
+  "dynamicTriggerPathList": [
+    {
+      "key": "onOptionChange"
+    }
+  ],
+  "isDisabled": "{{ !usersDropDown.selectedOptionValue }}\n",
+  "isFilterable": true,
+  "isLoading": false,
+  "isRequired": true,
+  "isVisible": true,
+  "key": "ch0he5e5e8",
+  "labelAlignment": "left",
+  "labelPosition": "Top",
+  "labelText": "Client name",
+  "labelTextSize": "0.875rem",
+  "labelTooltip": "You must select an attorney first in order to enable client lookups.\n\n",
+  "labelWidth": 5,
+  "leftColumn": 40,
+  "maxDynamicHeight": 9000,
+  "minDynamicHeight": 4,
+  "minWidth": 450,
+  "mobileBottomRow": 26,
+  "mobileLeftColumn": 1,
+  "mobileRightColumn": 21,
+  "mobileTopRow": 19,
+  "needsErrorInfo": false,
+  "onOptionChange": "{{ \nMatterDropDown.setSelectedOption(\"\"); \n\nstoreValue(\"selectedClient\", ClientDropDown.selectedOptionValue)\n\ngetMatterManage.run()\nSelect_dbo_timeSheetManager.run();\n\n}}",
+  "optionLabel": "name",
+  "optionValue": "code",
+  "originalBottomRow": 28,
+  "originalTopRow": 21,
+  "parentColumnSpace": 19.8125,
+  "parentId": "0",
+  "parentRowSpace": 10,
+  "placeholderText": "Select option",
+  "renderMode": "CANVAS",
+  "responsiveBehavior": "fill",
+  "rightColumn": 60,
+  "serverSideFiltering": false,
+  "sourceData": "{{clientsDropDownList.getClientsDropdown()\n}}",
+  "topRow": 0,
+  "type": "SELECT_WIDGET",
+  "version": 1,
+  "widgetId": "f5y48m1i4j",
+  "widgetName": "ClientDropDown"
+}

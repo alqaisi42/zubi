@@ -1,0 +1,18 @@
+IF CAST({{ Select_Matter.selectedOptionValue || 'NULL' }} AS INT) IS NULL
+    RETURN;
+
+DECLARE @MatterID INT = CAST({{ Select_Matter.selectedOptionValue || 'NULL' }} AS INT);
+DECLARE @UserID INT = CAST({{ Select_Username.selectedOptionValue || 'NULL' }} AS INT);
+
+SELECT 
+  U.ID AS UserID,
+  @MatterID AS MatterID,
+  ISNULL(MR.MatterRatings_HourlyRating, U.Users_CostPerTimeUnit) AS HourlyRating,
+  U.Users_DisplayName AS UserName
+FROM dbo.Users U
+LEFT JOIN dbo.MatterRatings MR 
+  ON MR.MatterRatings_Users_ID = U.ID 
+  AND MR.MatterRatings_Matters_ID = @MatterID
+WHERE 
+  @UserID IS NULL OR U.ID = @UserID
+ORDER BY U.Users_DisplayName;

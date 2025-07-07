@@ -1,0 +1,61 @@
+{
+  "animateLoading": true,
+  "borderRadius": "0.375rem",
+  "bottomRow": 47,
+  "boxShadow": "none",
+  "buttonColor": "{{appsmith.theme.colors.primaryColor}}",
+  "buttonVariant": "PRIMARY",
+  "disabledWhenInvalid": false,
+  "dynamicBindingPathList": [
+    {
+      "key": "buttonColor"
+    },
+    {
+      "key": "isDisabled"
+    }
+  ],
+  "dynamicPropertyPathList": [
+    {
+      "key": "isDisabled"
+    },
+    {
+      "key": "onClick"
+    }
+  ],
+  "dynamicTriggerPathList": [
+    {
+      "key": "onClick"
+    }
+  ],
+  "isDefaultClickDisabled": true,
+  "isDisabled": "{{!Input_TimeDuration.text || !Input_TimeSheetDate.selectedDate || !RichTextEditor1.text\n}}",
+  "isLoading": false,
+  "isVisible": true,
+  "key": "i8r0mgz7ps",
+  "leftColumn": 0,
+  "minWidth": 120,
+  "mobileBottomRow": 71,
+  "mobileLeftColumn": 37,
+  "mobileRightColumn": 53,
+  "mobileTopRow": 67,
+  "needsErrorInfo": false,
+  "onClick": "{{addOrUpdateTimesheet.run().then(() => {\n  showAlert('The Time sheet added successfully.', 'success');\n  storeValue(\"\", \"\");\n  Select_dbo_timeSheetManager.run();\n}).catch(() => {\n  showAlert('Failed to save the timesheet. Please try again or contact the system administrator if the issue persists.', 'error');\n});\n}}",
+  "originalBottomRow": 52,
+  "originalTopRow": 48,
+  "parentColumnSpace": 19.8125,
+  "parentId": "0",
+  "parentRowSpace": 10,
+  "placement": "CENTER",
+  "recaptchaType": "V3",
+  "renderMode": "CANVAS",
+  "resetFormOnClick": false,
+  "responsiveBehavior": "hug",
+  "rightColumn": 14,
+  "text": "Submit",
+  "tooltip": "Submit button will be enable when you complete all required data in above section.",
+  "topRow": 43,
+  "type": "BUTTON_WIDGET",
+  "version": 1,
+  "widgetId": "4bfawmhjk5",
+  "widgetName": "submitBtn"
+}

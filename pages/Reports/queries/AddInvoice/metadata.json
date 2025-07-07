@@ -1,0 +1,35 @@
+{
+  "gitSyncId": "6840178db39bf44c84766bcc_2a62985c-08cc-44a0-a461-2627741132dc",
+  "id": "Reports_AddInvoice",
+  "pluginId": "mssql-plugin",
+  "pluginType": "DB",
+  "unpublishedAction": {
+    "actionConfiguration": {
+      "body": "-- Simulate Appsmith inputs\nDECLARE \n    @InvoiceNumber    NVARCHAR(50)   = '{{ invoiceFiled.text.trim() }}',\n    @InvoiceDate      NVARCHAR(50)   = '{{ moment().format(\"YYYY-MM-DD HH:mm\") }}',\n    @InvoiceMatterID  INT            = {{ MattersMultiSelect.selectedOptionValues[0] || 0 }},\n    @InvoiceClientID  INT            = {{ ClientsMultiSelect.selectedOptionValues[0] || 0 }},\n    @TimesheetID      NVARCHAR(4000) = '{{ invoiceTable.tableData.map(row => row.ID).join(\",\") }}',\n    @ExpensesValues   NVARCHAR(4000) = '',\n    @AmountValues     NVARCHAR(4000) = '{{ totalCost.text }}',\n    @DiscountValue    FLOAT          = 0,\n    @Currency         INT            = 83;\n\n-- Output variables\nDECLARE @InvoiceID INT;\nDECLARE @RETVALUE INT;\nDECLARE @AffectedRows INT = 0;\n\n-- Declare temp tables\nIF OBJECT_ID('tempdb..#ExpensesSplitTbl') IS NOT NULL DROP TABLE #ExpensesSplitTbl;\nIF OBJECT_ID('tempdb..#AmountSplitTbl') IS NOT NULL DROP TABLE #AmountSplitTbl;\nIF OBJECT_ID('tempdb..#TimeSheetIDTbl') IS NOT NULL DROP TABLE #TimeSheetIDTbl;\n\nCREATE TABLE #ExpensesSplitTbl  (counter INT IDENTITY(1,1), value NVARCHAR(300));\nCREATE TABLE #AmountSplitTbl    (counter INT IDENTITY(1,1), value NVARCHAR(50));\nCREATE TABLE #TimeSheetIDTbl    (counter INT IDENTITY(1,1), value NVARCHAR(50));\n\n-- Validate inputs\nIF @InvoiceNumber = '' OR @InvoiceNumber IS NULL\nBEGIN\n    SET @RETVALUE = -1;\n    SET @AffectedRows = 0;\n    SELECT @RETVALUE AS ReturnValue, @AffectedRows AS AffectedRows;\n    RETURN;\nEND;\n\n-- Validate expense/amount counts\nIF @ExpensesValues <> '' AND @AmountValues <> ''\nBEGIN\n    IF (SELECT COUNT(*) FROM dbo.fn_Split(@ExpensesValues, ',')) <> (SELECT COUNT(*) FROM dbo.fn_Split(@AmountValues, ','))\n    BEGIN\n        THROW 50002, 'Mismatched number of expenses and amounts.', 1;\n    END;\nEND;\n\n-- Split inputs into temp tables\nINSERT INTO #ExpensesSplitTbl \nSELECT value FROM dbo.fn_Split(@ExpensesValues, ',') WHERE value <> '';\n\nINSERT INTO #AmountSplitTbl \nSELECT value FROM dbo.fn_Split(@AmountValues, ',') WHERE value <> '';\n\nINSERT INTO #TimeSheetIDTbl \nSELECT value FROM dbo.fn_Split(@TimesheetID, ',') WHERE value <> '';\n\n-- Prevent duplicate invoices\nIF EXISTS (\n    SELECT 1 \n    FROM Invoices i\n    JOIN InvoiceDetails d ON d.InvoiceDetails_Invoices_ID = i.ID\n    WHERE i.Invoices_Number = @InvoiceNumber\n      AND i.Invoices_Clients_ID = @InvoiceClientID\n      AND i.Invoices_Matter_ID = @InvoiceMatterID\n      AND CAST(i.Invoices_Date AS DATE) = CAST(@InvoiceDate AS DATE)\n      AND EXISTS (\n          SELECT 1 FROM #TimeSheetIDTbl ts\n          WHERE CAST(ts.value AS INT) = d.InvoiceDetails_TimeSheet_ID\n      )\n)\n\nBEGIN\n    SET @RETVALUE = -1;\n    SET @AffectedRows = 0;\n    SELECT @RETVALUE AS ReturnValue, @AffectedRows AS AffectedRows;\n    RETURN;\nEND;\n\nBEGIN TRY\n    BEGIN TRANSACTION;\n\n    -- Insert new invoice\n    INSERT INTO Invoices (\n        Invoices_Number,\n        Invoices_Date,\n        Invoices_Clients_ID,\n        Invoices_Matter_ID,\n        Invoice_DiscountValue,\n        Invoice_Currencies_ID\n    )\n    VALUES (\n        @InvoiceNumber,\n        CAST(@InvoiceDate AS DATETIME),\n        @InvoiceClientID,\n        @InvoiceMatterID,\n        @DiscountValue,\n        @Currency\n    );\n    SET @AffectedRows = @AffectedRows + @@ROWCOUNT;\n\n    -- Retrieve inserted ID\n    SET @InvoiceID = SCOPE_IDENTITY();\n\n    -- Insert each timesheet ID\n    INSERT INTO InvoiceDetails (InvoiceDetails_Invoices_ID, InvoiceDetails_TimeSheet_ID)\n    SELECT @InvoiceID, CAST(value AS INT)\n    FROM #TimeSheetIDTbl;\n    SET @AffectedRows = @AffectedRows + @@ROWCOUNT;\n\n    -- Conditionally insert expenses\n    IF @ExpensesValues IS NOT NULL AND @ExpensesValues <> ''\n       AND @AmountValues IS NOT NULL AND @AmountValues <> ''\n    BEGIN\n        INSERT INTO InvoiceExpenses (InvoiceExpenses_Invoices_ID, InvoiceExpenses_ExpenseName, InvoiceExpenses_Amount)\n        SELECT @InvoiceID, e.value, CAST(a.value AS FLOAT)\n        FROM #ExpensesSplitTbl e\n        JOIN #AmountSplitTbl a ON e.counter = a.counter;\n        SET @AffectedRows = @AffectedRows + @@ROWCOUNT;\n    END;\n\n    -- Set return value\n    SET @RETVALUE = @InvoiceID;\n\n    COMMIT;\nEND TRY\nBEGIN CATCH\n    ROLLBACK;\n    SET @RETVALUE = 0;\n    SET @AffectedRows = 0;\n    THROW;\nEND CATCH;\n\n-- Cleanup\nDROP TABLE #ExpensesSplitTbl;\nDROP TABLE #AmountSplitTbl;\nDROP TABLE #TimeSheetIDTbl;\n\n-- Return result\nSELECT 1 AS ReturnValue, 1 AS AffectedRows;",
+      "encodeParamsToggle": true,
+      "paginationType": "NONE",
+      "pluginSpecifiedTemplates": [
+        {
+          "value": false
+        }
+      ],
+      "timeoutInMillisecond": 10000
+    },
+    "confirmBeforeExecute": false,
+    "datasource": {
+      "id": "Law Project DB",
+      "isAutoGenerated": false,
+      "name": "Law Project DB",
+      "pluginId": "mssql-plugin"
+    },
+    "dynamicBindingPathList": [
+      {
+        "key": "body"
+      }
+    ],
+    "name": "AddInvoice",
+    "pageId": "Reports",
+    "runBehaviour": "MANUAL",
+    "userSetOnLoad": false
+  }
+}

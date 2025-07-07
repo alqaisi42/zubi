@@ -1,0 +1,11 @@
+{
+  "gitSyncId": "682c3f379fbebc47e63ede10_edb56962-d60a-48ff-b28c-74fdc09f56db",
+  "id": "ManageTimeSheet_clientsDropDownList",
+  "unpublishedCollection": {
+    "name": "clientsDropDownList",
+    "pageId": "ManageTimeSheet",
+    "pluginId": "js-plugin",
+    "pluginType": "JS",
+    "variables": []
+  }
+}

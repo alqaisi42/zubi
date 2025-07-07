@@ -1,0 +1,3 @@
+UPDATE TimeSheet
+SET TimeSheet_TimeSheetStatuses_ID = 3 -- assuming 3 means "Closed"
+WHERE ID IN ({{ entries_need_approve_table.selectedRows.map(row => row.ID).join(',') }})

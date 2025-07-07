@@ -1,0 +1,11 @@
+{
+  "gitSyncId": "682f21b17162c93551de171a_3d7c422f-b63d-4409-929e-143bcdb44b3e",
+  "id": "Rating_getTableData",
+  "unpublishedCollection": {
+    "name": "getTableData",
+    "pageId": "Rating",
+    "pluginId": "js-plugin",
+    "pluginType": "JS",
+    "variables": []
+  }
+}

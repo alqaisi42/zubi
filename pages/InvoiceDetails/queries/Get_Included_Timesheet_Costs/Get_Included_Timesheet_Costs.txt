@@ -1,0 +1,9 @@
+SELECT 
+    IDT.ID AS InvoiceDetailID,
+    IDT.InvoiceDetails_TimeSheet_ID AS TimesheetID,
+    CAST(TS.TimeSheet_TimeDuration AS FLOAT) * TS.TimeSheet_Cost * CUR.Currencies_ExchangeRate AS Cost
+FROM InvoiceDetails IDT
+JOIN TimeSheet TS ON IDT.InvoiceDetails_TimeSheet_ID = TS.ID
+JOIN Invoices I ON IDT.InvoiceDetails_Invoices_ID = I.ID
+JOIN Currencies CUR ON I.Invoice_Currencies_ID = CUR.ID
+WHERE IDT.InvoiceDetails_Invoices_ID = {{ appsmith.URL.queryParams.invoiceID }}

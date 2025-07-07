@@ -1,0 +1,28 @@
+SELECT 
+    TS.ID AS TimesheetID,
+    TS.TimeSheet_Date,
+    TS.TimeSheet_TimeDuration,
+    TS.TimeSheet_Comments,
+    C.Clients_ClientName,
+    M.Matters_Name,
+    M.Matters_MatterCode,
+    U.Users_DisplayName,
+    TS.TimeSheet_Cost AS DailyRating
+FROM TimeSheet TS
+JOIN Clients C ON TS.TimeSheet_Clients_ID = C.ID
+JOIN Matters M ON TS.TimeSheet_Matters_ID = M.ID
+JOIN Users U ON TS.TimeSheet_Users_ID = U.ID
+WHERE TS.ID NOT IN (
+    SELECT InvoiceDetails_TimeSheet_ID 
+    FROM InvoiceDetails 
+    WHERE InvoiceDetails_Invoices_ID = {{ appsmith.URL.queryParams.invoiceID }}
+)
+AND TS.TimeSheet_TimeSheetStatuses_ID = 3
+AND TS.TimeSheet_BillingStatuses_ID = 1
+AND TS.TimeSheet_Clients_ID = (
+    SELECT Invoices_Clients_ID FROM Invoices WHERE ID = {{ appsmith.URL.queryParams.invoiceID }}
+)
+AND TS.TimeSheet_Matters_ID = (
+    SELECT Invoices_Matter_ID FROM Invoices WHERE ID = {{ appsmith.URL.queryParams.invoiceID }}
+)
+ORDER BY TS.TimeSheet_Date

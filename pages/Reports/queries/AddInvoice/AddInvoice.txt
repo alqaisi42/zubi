@@ -1,0 +1,137 @@
+-- Simulate Appsmith inputs
+DECLARE 
+    @InvoiceNumber    NVARCHAR(50)   = '{{ invoiceFiled.text.trim() }}',
+    @InvoiceDate      NVARCHAR(50)   = '{{ moment().format("YYYY-MM-DD HH:mm") }}',
+    @InvoiceMatterID  INT            = {{ MattersMultiSelect.selectedOptionValues[0] || 0 }},
+    @InvoiceClientID  INT            = {{ ClientsMultiSelect.selectedOptionValues[0] || 0 }},
+    @TimesheetID      NVARCHAR(4000) = '{{ invoiceTable.tableData.map(row => row.ID).join(",") }}',
+    @ExpensesValues   NVARCHAR(4000) = '',
+    @AmountValues     NVARCHAR(4000) = '{{ totalCost.text }}',
+    @DiscountValue    FLOAT          = 0,
+    @Currency         INT            = 83;
+
+-- Output variables
+DECLARE @InvoiceID INT;
+DECLARE @RETVALUE INT;
+DECLARE @AffectedRows INT = 0;
+
+-- Declare temp tables
+IF OBJECT_ID('tempdb..#ExpensesSplitTbl') IS NOT NULL DROP TABLE #ExpensesSplitTbl;
+IF OBJECT_ID('tempdb..#AmountSplitTbl') IS NOT NULL DROP TABLE #AmountSplitTbl;
+IF OBJECT_ID('tempdb..#TimeSheetIDTbl') IS NOT NULL DROP TABLE #TimeSheetIDTbl;
+
+CREATE TABLE #ExpensesSplitTbl  (counter INT IDENTITY(1,1), value NVARCHAR(300));
+CREATE TABLE #AmountSplitTbl    (counter INT IDENTITY(1,1), value NVARCHAR(50));
+CREATE TABLE #TimeSheetIDTbl    (counter INT IDENTITY(1,1), value NVARCHAR(50));
+
+-- Validate inputs
+IF @InvoiceNumber = '' OR @InvoiceNumber IS NULL
+BEGIN
+    SET @RETVALUE = -1;
+    SET @AffectedRows = 0;
+    SELECT @RETVALUE AS ReturnValue, @AffectedRows AS AffectedRows;
+    RETURN;
+END;
+
+-- Validate expense/amount counts
+IF @ExpensesValues <> '' AND @AmountValues <> ''
+BEGIN
+    IF (SELECT COUNT(*) FROM dbo.fn_Split(@ExpensesValues, ',')) <> (SELECT COUNT(*) FROM dbo.fn_Split(@AmountValues, ','))
+    BEGIN
+        THROW 50002, 'Mismatched number of expenses and amounts.', 1;
+    END;
+END;
+
+-- Split inputs into temp tables
+INSERT INTO #ExpensesSplitTbl 
+SELECT value FROM dbo.fn_Split(@ExpensesValues, ',') WHERE value <> '';
+
+INSERT INTO #AmountSplitTbl 
+SELECT value FROM dbo.fn_Split(@AmountValues, ',') WHERE value <> '';
+
+INSERT INTO #TimeSheetIDTbl 
+SELECT value FROM dbo.fn_Split(@TimesheetID, ',') WHERE value <> '';
+
+-- Prevent duplicate invoices
+IF EXISTS (
+    SELECT 1 
+    FROM Invoices i
+    JOIN InvoiceDetails d ON d.InvoiceDetails_Invoices_ID = i.ID
+    WHERE i.Invoices_Number = @InvoiceNumber
+      AND i.Invoices_Clients_ID = @InvoiceClientID
+      AND i.Invoices_Matter_ID = @InvoiceMatterID
+      AND CAST(i.Invoices_Date AS DATE) = CAST(@InvoiceDate AS DATE)
+      AND EXISTS (
+          SELECT 1 FROM #TimeSheetIDTbl ts
+          WHERE CAST(ts.value AS INT) = d.InvoiceDetails_TimeSheet_ID
+      )
+)
+
+BEGIN
+    SET @RETVALUE = -1;
+    SET @AffectedRows = 0;
+    SELECT @RETVALUE AS ReturnValue, @AffectedRows AS AffectedRows;
+    RETURN;
+END;
+
+BEGIN TRY
+    BEGIN TRANSACTION;
+
+    -- Insert new invoice
+    INSERT INTO Invoices (
+        Invoices_Number,
+        Invoices_Date,
+        Invoices_Clients_ID,
+        Invoices_Matter_ID,
+        Invoice_DiscountValue,
+        Invoice_Currencies_ID
+    )
+    VALUES (
+        @InvoiceNumber,
+        CAST(@InvoiceDate AS DATETIME),
+        @InvoiceClientID,
+        @InvoiceMatterID,
+        @DiscountValue,
+        @Currency
+    );
+    SET @AffectedRows = @AffectedRows + @@ROWCOUNT;
+
+    -- Retrieve inserted ID
+    SET @InvoiceID = SCOPE_IDENTITY();
+
+    -- Insert each timesheet ID
+    INSERT INTO InvoiceDetails (InvoiceDetails_Invoices_ID, InvoiceDetails_TimeSheet_ID)
+    SELECT @InvoiceID, CAST(value AS INT)
+    FROM #TimeSheetIDTbl;
+    SET @AffectedRows = @AffectedRows + @@ROWCOUNT;
+
+    -- Conditionally insert expenses
+    IF @ExpensesValues IS NOT NULL AND @ExpensesValues <> ''
+       AND @AmountValues IS NOT NULL AND @AmountValues <> ''
+    BEGIN
+        INSERT INTO InvoiceExpenses (InvoiceExpenses_Invoices_ID, InvoiceExpenses_ExpenseName, InvoiceExpenses_Amount)
+        SELECT @InvoiceID, e.value, CAST(a.value AS FLOAT)
+        FROM #ExpensesSplitTbl e
+        JOIN #AmountSplitTbl a ON e.counter = a.counter;
+        SET @AffectedRows = @AffectedRows + @@ROWCOUNT;
+    END;
+
+    -- Set return value
+    SET @RETVALUE = @InvoiceID;
+
+    COMMIT;
+END TRY
+BEGIN CATCH
+    ROLLBACK;
+    SET @RETVALUE = 0;
+    SET @AffectedRows = 0;
+    THROW;
+END CATCH;
+
+-- Cleanup
+DROP TABLE #ExpensesSplitTbl;
+DROP TABLE #AmountSplitTbl;
+DROP TABLE #TimeSheetIDTbl;
+
+-- Return result
+SELECT 1 AS ReturnValue, 1 AS AffectedRows;

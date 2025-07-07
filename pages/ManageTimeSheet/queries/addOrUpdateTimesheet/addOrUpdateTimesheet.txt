@@ -1,0 +1,35 @@
+DECLARE @ResolvedCost FLOAT;
+
+SELECT @ResolvedCost = ISNULL(
+  (SELECT TOP 1 MatterRatings_HourlyRating FROM MatterRatings 
+   WHERE MatterRatings_Users_ID = {{usersDropDown.selectedOptionValue}} 
+     AND MatterRatings_Matters_ID = {{MatterDropDown.selectedOptionValue}}),
+  (SELECT TOP 1 Users_CostPerTimeUnit FROM dbo.Users 
+   WHERE ID = {{usersDropDown.selectedOptionValue}})
+);
+
+
+DECLARE @TimeSheetCost DECIMAL(18, 2) = 
+  ISNULL(CAST(NULLIF('{{ getAttorneyRate.getAttorneyRate() }}', '') AS DECIMAL(18,2)), @ResolvedCost);
+
+
+EXEC [dbo].[spr_AddUpdateTimeSheet]
+  @TimeSheetDate = '{{Input_TimeSheetDate.selectedDate}}',
+  @ID = {{ filteredTimeSheets.selectedRow && filteredTimeSheets.selectedRow.ID ? filteredTimeSheets.selectedRow.ID : 'null' }},
+  @TimeSheetClientID = {{ClientDropDown.selectedOptionValue || 'null'}},
+  @MatterID = {{MatterDropDown.selectedOptionValue || 'null'}},
+  @ActivityID = 0,
+  @TimeDuration = '{{Input_TimeDuration.text}}',
+  @TimeSheetHours = 0,
+  @TimeSheetCost = @TimeSheetCost,
+  @TimeSheetStatus = {{ time_sheet_status.selectedOptionValue || 1 }},
+  @BillingStatus = 1,
+  @TimeSheetComments = '{{ RichTextEditor1.text
+  .replace(/<[^>]*>/g, "")         // remove HTML tags
+  .replace(/&nbsp;/g, " ")         // decode non-breaking space
+  .replace(/\s+/g, " ")            // normalize whitespace
+  .trim()
+}}',
+  @UserID = {{usersDropDown.selectedOptionValue}},
+  @isActive = 1,
+  @AATName = null

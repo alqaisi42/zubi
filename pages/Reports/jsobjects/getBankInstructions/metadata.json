@@ -1,0 +1,11 @@
+{
+  "gitSyncId": "6840178db39bf44c84766bcc_dd8ce32b-dbf9-4537-9194-0379466122cd",
+  "id": "Reports_getBankInstructions",
+  "unpublishedCollection": {
+    "name": "getBankInstructions",
+    "pageId": "Reports",
+    "pluginId": "js-plugin",
+    "pluginType": "JS",
+    "variables": []
+  }
+}

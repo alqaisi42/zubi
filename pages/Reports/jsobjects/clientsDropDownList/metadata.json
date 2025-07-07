@@ -1,0 +1,11 @@
+{
+  "gitSyncId": "682f21b17162c93551de171a_2d58c17d-7db5-4e5e-b728-782c8fe7194a",
+  "id": "Reports_clientsDropDownList",
+  "unpublishedCollection": {
+    "name": "clientsDropDownList",
+    "pageId": "Reports",
+    "pluginId": "js-plugin",
+    "pluginType": "JS",
+    "variables": []
+  }
+}

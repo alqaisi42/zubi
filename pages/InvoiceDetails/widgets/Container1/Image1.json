@@ -1,0 +1,41 @@
+{
+  "animateLoading": true,
+  "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
+  "bottomRow": 7,
+  "boxShadow": "none",
+  "defaultImage": "https://back.zubilaw.com/uploads/1725438840979.png",
+  "dynamicBindingPathList": [
+    {
+      "key": "borderRadius"
+    }
+  ],
+  "dynamicTriggerPathList": [],
+  "enableDownload": false,
+  "enableRotation": false,
+  "flexVerticalAlignment": "start",
+  "image": "",
+  "imageShape": "RECTANGLE",
+  "isLoading": false,
+  "isVisible": true,
+  "key": "7fm2wqoxuf",
+  "leftColumn": 45,
+  "maxZoomLevel": 1,
+  "mobileBottomRow": 153,
+  "mobileLeftColumn": 52,
+  "mobileRightColumn": 64,
+  "mobileTopRow": 141,
+  "needsErrorInfo": false,
+  "objectFit": "contain",
+  "originalBottomRow": 148,
+  "originalTopRow": 141,
+  "parentColumnSpace": 2.8125,
+  "parentId": "g4pz77jz1t",
+  "parentRowSpace": 10,
+  "renderMode": "CANVAS",
+  "rightColumn": 63,
+  "topRow": 0,
+  "type": "IMAGE_WIDGET",
+  "version": 1,
+  "widgetId": "nrtfe0ii2m",
+  "widgetName": "Image1"
+}

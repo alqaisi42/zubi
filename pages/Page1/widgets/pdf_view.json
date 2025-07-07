@@ -1,0 +1,42 @@
+{
+  "animateLoading": true,
+  "bottomRow": 118,
+  "bottomRowBeforeCollapse": 147,
+  "docUrl": "{{ appsmith.store.pdfDataUri }}",
+  "dynamicBindingPathList": [
+    {
+      "key": "docUrl"
+    }
+  ],
+  "dynamicPropertyPathList": [
+    {
+      "key": "isVisible"
+    }
+  ],
+  "dynamicTriggerPathList": [],
+  "flexVerticalAlignment": "start",
+  "isCanvas": false,
+  "isLoading": false,
+  "isVisible": "true",
+  "key": "zqsdv5t1et",
+  "leftColumn": 0,
+  "mobileBottomRow": 63,
+  "mobileLeftColumn": 6,
+  "mobileRightColumn": 30,
+  "mobileTopRow": 23,
+  "needsErrorInfo": false,
+  "originalBottomRow": 147,
+  "originalTopRow": 28,
+  "parentColumnSpace": 17.5625,
+  "parentId": "0",
+  "parentRowSpace": 10,
+  "renderMode": "CANVAS",
+  "responsiveBehavior": "fill",
+  "rightColumn": 62,
+  "topRow": 0,
+  "topRowBeforeCollapse": 28,
+  "type": "DOCUMENT_VIEWER_WIDGET",
+  "version": 1,
+  "widgetId": "f3u2njhl7u",
+  "widgetName": "pdf_view"
+}

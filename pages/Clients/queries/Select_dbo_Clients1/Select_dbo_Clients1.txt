@@ -1,0 +1,13 @@
+SELECT
+  C.*,
+  S.ClientStatuses_Name AS StatusName,
+  P.PaymentsType_Type AS PaymentType,
+  CU.Currencies_Name AS CurrencyName
+FROM
+  dbo.Clients C
+LEFT JOIN dbo.ClientStatuses S ON C.Clients_ClientStatuses_ID = S.ID
+LEFT JOIN dbo.PaymentsType P ON C.Clients_PaymentsType_ID = P.ID
+LEFT JOIN dbo.Currencies CU ON C.Clients_Currencies_ID = CU.ID
+ORDER BY
+  {{ clientTable.sortOrder.column || 'C.ID' }} {{ clientTable.sortOrder.order !== "desc" ? "" : "DESC" }}
+

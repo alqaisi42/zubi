@@ -1,0 +1,5 @@
+SELECT 
+  ID AS value,
+  PaymentsType_Type AS label
+FROM [ZubiTimeSheet].[dbo].[PaymentsType]
+ORDER BY PaymentsType_Type;

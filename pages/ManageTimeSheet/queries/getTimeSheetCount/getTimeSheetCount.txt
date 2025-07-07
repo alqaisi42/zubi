@@ -1,0 +1,6 @@
+SELECT COUNT(*) AS totalCount
+FROM dbo.TimeSheet
+WHERE 1 = 1
+  {{ ClientDropDown.selectedOptionValue ? 'AND TimeSheet_Clients_ID = ' + ClientDropDown.selectedOptionValue : '' }}
+  {{ usersDropDown.selectedOptionValue ? 'AND TimeSheet_Users_ID = ' + usersDropDown.selectedOptionValue : '' }}
+  {{ MatterDropDown.selectedOptionValue ? 'AND TimeSheet_Matters_ID = ' + MatterDropDown.selectedOptionValue : '' }}

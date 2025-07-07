@@ -1,0 +1,11 @@
+{
+  "gitSyncId": "682c3f379fbebc47e63ede10_376747e1-c1b1-4136-a737-058a484cd30d",
+  "id": "ManageTimeSheet_resetFilterationUI",
+  "unpublishedCollection": {
+    "name": "resetFilterationUI",
+    "pageId": "ManageTimeSheet",
+    "pluginId": "js-plugin",
+    "pluginType": "JS",
+    "variables": []
+  }
+}

@@ -1,0 +1,8 @@
+SELECT
+  ID,
+  Matters_Name
+FROM
+  dbo.Matters
+{{ appsmith.store.selectedClient ? 'WHERE Matters_Clients_ID = ' + appsmith.store.selectedClient : '' }}
+ORDER BY
+  Matters_Name

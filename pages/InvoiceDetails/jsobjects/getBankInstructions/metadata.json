@@ -1,0 +1,11 @@
+{
+  "gitSyncId": "6840178db39bf44c84766bcc_9a42128b-24bd-4165-a07f-3abba387f5f4",
+  "id": "InvoiceDetails_getBankInstructions",
+  "unpublishedCollection": {
+    "name": "getBankInstructions",
+    "pageId": "InvoiceDetails",
+    "pluginId": "js-plugin",
+    "pluginType": "JS",
+    "variables": []
+  }
+}

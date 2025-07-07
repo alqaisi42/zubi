@@ -1,0 +1,20 @@
+{
+  "gitSyncId": "682f21b17162c93551de171a_e2169588-c546-426b-accf-a4aaaef7092f",
+  "id": "Rating_JSObject1",
+  "unpublishedCollection": {
+    "name": "JSObject1",
+    "pageId": "Rating",
+    "pluginId": "js-plugin",
+    "pluginType": "JS",
+    "variables": [
+      {
+        "name": "myVar1",
+        "value": "[]"
+      },
+      {
+        "name": "myVar2",
+        "value": "{}"
+      }
+    ]
+  }
+}

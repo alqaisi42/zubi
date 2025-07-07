@@ -1,0 +1,6 @@
+SELECT 
+    ID,
+    InvoiceExpenses_ExpenseName AS ExpenseName,
+    InvoiceExpenses_Amount AS Amount
+FROM InvoiceExpenses
+WHERE InvoiceExpenses_Invoices_ID = {{ appsmith.URL.queryParams.invoiceID }}

@@ -1,0 +1,11 @@
+{
+  "gitSyncId": "6840178db39bf44c84766bcc_7b4c059f-3cd8-4853-ac46-7c3415777880",
+  "id": "Reports_generateInvoicePDFFunc",
+  "unpublishedCollection": {
+    "name": "generateInvoicePDFFunc",
+    "pageId": "Reports",
+    "pluginId": "js-plugin",
+    "pluginType": "JS",
+    "variables": []
+  }
+}

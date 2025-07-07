@@ -1,0 +1,14 @@
+EXEC [dbo].[spr_GenerateReport]
+    @ClientsList = '',
+    @usersList = '',
+    @GroupsList = '',
+    @MattersList = '',
+    @ActivitiesList = '',
+    @ClientStatus = NULL,
+    @TimeSheetStatus = NULL,
+    @BillingStatus = NULL,
+    @MatterStatus = NULL,
+    @dateFrom = '2025-05-01T00:00:00',
+    @dateTo = '2025-05-27T23:59:59',
+    @RatingType = 0,
+    @PaymentType = NULL;

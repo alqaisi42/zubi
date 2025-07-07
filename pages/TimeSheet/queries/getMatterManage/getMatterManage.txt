@@ -1,0 +1,4 @@
+SELECT ID, Matters_Name
+FROM dbo.Matters
+{{ Select_clients.selectedOptionValue ? 'WHERE Matters_Clients_ID = ' + Select_clients.selectedOptionValue : '' }}
+ORDER BY Matters_Name

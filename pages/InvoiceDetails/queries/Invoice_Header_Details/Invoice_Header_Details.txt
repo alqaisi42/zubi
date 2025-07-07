@@ -1,0 +1,19 @@
+SELECT  
+    I.ID,
+    I.Invoices_Number AS InvoiceNumber,
+    I.Invoices_Date AS InvoiceDate,
+    C.Clients_ClientName AS ClientName,
+    M.Matters_Name AS MatterName,
+    M.Matters_MatterCode AS MatterCode,
+    I.Invoice_DiscountValue AS Discount,
+    CUR.ID AS CurrencyID,
+    CUR.Currencies_Name AS Currency,
+    CUR.Currencies_Symbol AS CurrencySymbol,
+    CUR.Currencies_ExchangeRate AS ExchangeRate,
+    C.ID AS ClientID,
+    M.ID AS MatterID
+FROM Invoices I
+INNER JOIN Clients C ON I.Invoices_Clients_ID = C.ID
+INNER JOIN Matters M ON I.Invoices_Matter_ID = M.ID
+INNER JOIN Currencies CUR ON I.Invoice_Currencies_ID = CUR.ID
+WHERE I.ID = {{ appsmith.URL.queryParams.invoiceID }}

@@ -1,0 +1,11 @@
+{
+  "gitSyncId": "6840178db39bf44c84766bcc_93b3f46c-4589-4182-be8c-008d4a4de8a5",
+  "id": "InvoiceDetails_convertAmountToWords",
+  "unpublishedCollection": {
+    "name": "convertAmountToWords",
+    "pageId": "InvoiceDetails",
+    "pluginId": "js-plugin",
+    "pluginType": "JS",
+    "variables": []
+  }
+}

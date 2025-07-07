@@ -1,0 +1,11 @@
+{
+  "gitSyncId": "6840178db39bf44c84766bcc_9b49c40a-2be3-4d25-9dc1-ad924bc312fd",
+  "id": "Reports_getCostText",
+  "unpublishedCollection": {
+    "name": "getCostText",
+    "pageId": "Reports",
+    "pluginId": "js-plugin",
+    "pluginType": "JS",
+    "variables": []
+  }
+}

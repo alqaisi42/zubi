@@ -1,0 +1,6 @@
+SELECT 
+  ID AS value,
+  ClientStatuses_Name AS label
+FROM [ZubiTimeSheet].[dbo].[ClientStatuses]
+WHERE ClientStatuses_Name IS NOT NULL
+ORDER BY ClientStatuses_Name;

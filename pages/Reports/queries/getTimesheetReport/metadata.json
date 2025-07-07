@@ -1,0 +1,35 @@
+{
+  "gitSyncId": "682f21b17162c93551de171a_53421684-0610-4968-ab8d-969e7846f6fb",
+  "id": "Reports_getTimesheetReport",
+  "pluginId": "mssql-plugin",
+  "pluginType": "DB",
+  "unpublishedAction": {
+    "actionConfiguration": {
+      "body": "-- Define filtering values as inline parameters\nDECLARE \n    @ClientsList VARCHAR(8000) = '{{ ClientsMultiSelect.selectedOptionValues.join(\",\") }}',\n    @usersList VARCHAR(8000) = '{{ attorneyDropDownList.selectedOptionValue || \"\" }}',\n    @GroupsList VARCHAR(8000) = '',\n    @MattersList VARCHAR(8000) = '{{ MattersMultiSelect.selectedOptionValues.join(\",\") }}',\n    @ActivitiesList VARCHAR(8000) = '',\n    @ClientStatus INT = NULL,\n    @TimeSheetStatus INT = {{ timeSheetStatus.selectedOptionValue || 'NULL' }},\n    @BillingStatus INT = {{ BillingStatus.selectedOptionValue || 'NULL' }},\n    @MatterStatus INT = NULL,\n    @dateFrom NVARCHAR(50) = '{{ Checkbox1.isChecked ? \"\" : Input_TimeSheetDate.selectedDate }}',\n    @dateTo NVARCHAR(50) = '{{ Checkbox1.isChecked ? \"\" : DateTo.selectedDate }}',\n    @PaymentType INT = NULL;\n\n-- Split comma-separated values using your dbo.fn_Split\n-- These would be temp tables in the proc; here you can use CTEs or table variables\n-- For example, assuming '238,242,244'\nWITH \nClientSplitTbl AS (\n    SELECT value FROM dbo.fn_Split(@ClientsList, ',') WHERE value <> ''\n),\nUserSplitTbl AS (\n    SELECT value FROM dbo.fn_Split(@usersList, ',') WHERE value <> ''\n),\nGroupSplitTbl AS (\n    SELECT value FROM dbo.fn_Split(@GroupsList, ',') WHERE value <> ''\n),\nMatterSplitTbl AS (\n    SELECT value FROM dbo.fn_Split(@MattersList, ',') WHERE value <> ''\n),\nActivitySplitTbl AS (\n    SELECT value FROM dbo.fn_Split(@ActivitiesList, ',') WHERE value <> ''\n)\n\n-- Final Select\nSELECT \n    TimeSheet.ID AS ID,\n    Activities.ID AS ActivityID,\n    ISNULL(Activities_Name, '') AS ActivityName,\n    Activities_Active AS ActivityISActive,\n    (\n        SELECT TOP 1 AdministratorSettings_NumberOfMinutes \n        FROM dbo.AdministratorSettings\n    ) AS NumberOfMinutes,\n    Clients.ID AS ClientID,\n    ISNULL(Clients_ClientName, '') AS ClientName,\n    Clients_ClientCode AS ClientCode,\n    Clients_ClientStatuses_ID AS ClientStatusID,\n    Clients_ClientActive AS ClientIsActive,\n    Clients_ClientTracking AS ClientTracking,\n    ISNULL(Clients_ClientContactPerson, '') AS ClientContactPerson,\n    ISNULL(Clients_ClientContactPerson1Mobile, '') AS ClientContactPerson1Mobile,\n    ISNULL(Clients_ClientContactPerson1Email, '') AS ClientContactPerson1Email,\n    ISNULL(Clients_ClientAddress, '') AS ClientAddress,\n    ISNULL(Clients_ClientTelephone, '') AS ClientTelephone,\n    ISNULL(Clients_ClientFax, '') AS ClientFax,\n    ISNULL(Clients_ClientWebsite, '') AS ClientWebsite,\n    Matters.ID AS MatterID,\n    ISNULL(Matters_Name, '') AS MatterName,\n    Matters_MatterCode AS MatterCode,\n    Groups_GroupName AS GroupName,\n    Groups_GroupActive AS GroupIsActive,\n    CAST(CONVERT(DATE, TimeSheet.TimeSheet_Date, 103) AS DATETIME) AS TimeSheetDate,\n\t\tCAST(TimeSheet_TimeDuration AS FLOAT) AS TimeDuration,\n    TimeSheet_Hours AS TimeSheetHours,\n    TimeSheet_Cost AS TimeSheetCost,\n    TimeSheet_TimeSheetStatuses_ID AS TimeSheetStatusID,\n    TimeSheet_BillingStatuses_ID AS BillingStatusID,\n    Matters.Matters_MatterStatuses_ID AS MatterStatusID,\n    ISNULL(TimeSheet_Comments, '') AS Comments,\n    TimeSheet_Active AS TimeSheetISActive,\n    ISNULL(TimeSheet_AttName, '') AS AttName,\n    TimeSheetStatuses_Name AS TimeSheetStatus,\n    BillingStatuses_Name AS BillingStatus,\n    MatterStatuses_Name AS MatterStatus,\n    ISNULL(Users_DisplayName, '') AS DisplayName,\n    ISNULL(Users_ADUserName, '') AS ADUserName,\n    Users_CostPerTimeUnit AS CostPerTimeUnit,\n    Users_IsSuperAdmin AS IsSuperAdmin,\n    Users_Useractive AS UserISActive,\n    Users_UserLevels_ID AS UserLevelID,\n    ISNULL(Users_Email, '') AS Email,\n    Clients.Clients_PaymentsType_ID AS PaymetType,\n    CAST(ISNULL(Users_CostPerTimeUnit, 0) AS NUMERIC(18, 2)) AS Rating,\n    ISNULL(TimeSheet_Cost, 0) AS DailyRating,\n    ISNULL(Users_CostPerTimeUnit, 0) AS HourlyRating,\n    CAST(CONVERT(DATE, TimeSheet.TimeSheet_Date, 103) AS DATETIME) AS InvoiceDate\nFROM TimeSheet\nLEFT JOIN TimeSheetStatuses ON TimeSheet_TimeSheetStatuses_ID = TimeSheetStatuses.ID\nLEFT JOIN BillingStatuses ON TimeSheet_BillingStatuses_ID = BillingStatuses.ID\nLEFT JOIN Clients ON TimeSheet.TimeSheet_Clients_ID = Clients.ID\nLEFT JOIN Matters ON TimeSheet.TimeSheet_Matters_ID = Matters.ID\nLEFT JOIN MatterStatuses ON Matters.Matters_MatterStatuses_ID = MatterStatuses.ID\nLEFT JOIN Activities ON TimeSheet.TimeSheet_Activity_ID = Activities.ID\nLEFT JOIN Users ON TimeSheet.TimeSheet_Users_ID = Users.ID\nLEFT JOIN ClientGroups ON TimeSheet.TimeSheet_Clients_ID = ClientGroups.ClientGroups_Clients_ID\nLEFT JOIN Groups ON ClientGroups_Groups_ID = Groups.ID\nWHERE\n    (TimeSheet.TimeSheet_Clients_ID IN (SELECT value FROM ClientSplitTbl) OR @ClientsList = '') AND\n    (TimeSheet.TimeSheet_Matters_ID IN (SELECT value FROM MatterSplitTbl) OR @MattersList = '') AND\n    (TimeSheet.TimeSheet_Activity_ID IN (SELECT value FROM ActivitySplitTbl) OR @ActivitiesList = '') AND\n    (ClientGroups.ClientGroups_Groups_ID IN (SELECT value FROM GroupSplitTbl) OR @GroupsList = '') AND\n    (TimeSheet.TimeSheet_Users_ID IN (SELECT value FROM UserSplitTbl) OR @usersList = '') AND\n    (TimeSheet.TimeSheet_Date >= TRY_CAST(@dateFrom AS DATETIME) OR @dateFrom = '') AND\n    (TimeSheet.TimeSheet_Date <= TRY_CAST(@dateTo AS DATETIME) OR @dateTo = '') AND\n    TimeSheet.TimeSheet_Active = 1 AND\n    Clients.Clients_ClientActive = 1 AND\n    (TimeSheet_TimeSheetStatuses_ID = @TimeSheetStatus OR @TimeSheetStatus IS NULL) AND\n    (TimeSheet_BillingStatuses_ID = @BillingStatus OR @BillingStatus IS NULL) AND\n    (Matters_MatterStatuses_ID = @MatterStatus OR @MatterStatus IS NULL) AND\n    (Clients.Clients_ClientStatuses_ID = @ClientStatus OR @ClientStatus IS NULL) AND\n    (Clients.Clients_PaymentsType_ID = @PaymentType OR @PaymentType IS NULL)\nORDER BY TimeSheetDate;\n",
+      "encodeParamsToggle": true,
+      "paginationType": "NONE",
+      "pluginSpecifiedTemplates": [
+        {
+          "value": false
+        }
+      ],
+      "timeoutInMillisecond": 1000000
+    },
+    "confirmBeforeExecute": false,
+    "datasource": {
+      "id": "Law Project DB",
+      "isAutoGenerated": false,
+      "name": "Law Project DB",
+      "pluginId": "mssql-plugin"
+    },
+    "dynamicBindingPathList": [
+      {
+        "key": "body"
+      }
+    ],
+    "name": "getTimesheetReport",
+    "pageId": "Reports",
+    "runBehaviour": "MANUAL",
+    "userSetOnLoad": true
+  }
+}

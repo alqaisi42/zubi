@@ -1,0 +1,114 @@
+-- Define filtering values as inline parameters
+DECLARE 
+    @ClientsList VARCHAR(8000) = '{{ ClientsMultiSelect.selectedOptionValues.join(",") }}',
+    @usersList VARCHAR(8000) = '{{ attorneyDropDownList.selectedOptionValue || "" }}',
+    @GroupsList VARCHAR(8000) = '',
+    @MattersList VARCHAR(8000) = '{{ MattersMultiSelect.selectedOptionValues.join(",") }}',
+    @ActivitiesList VARCHAR(8000) = '',
+    @ClientStatus INT = NULL,
+    @TimeSheetStatus INT = {{ timeSheetStatus.selectedOptionValue || 'NULL' }},
+    @BillingStatus INT = {{ BillingStatus.selectedOptionValue || 'NULL' }},
+    @MatterStatus INT = NULL,
+    @dateFrom NVARCHAR(50) = '{{ Checkbox1.isChecked ? "" : Input_TimeSheetDate.selectedDate }}',
+    @dateTo NVARCHAR(50) = '{{ Checkbox1.isChecked ? "" : DateTo.selectedDate }}',
+    @PaymentType INT = NULL;
+
+-- Split comma-separated values using your dbo.fn_Split
+-- These would be temp tables in the proc; here you can use CTEs or table variables
+-- For example, assuming '238,242,244'
+WITH 
+ClientSplitTbl AS (
+    SELECT value FROM dbo.fn_Split(@ClientsList, ',') WHERE value <> ''
+),
+UserSplitTbl AS (
+    SELECT value FROM dbo.fn_Split(@usersList, ',') WHERE value <> ''
+),
+GroupSplitTbl AS (
+    SELECT value FROM dbo.fn_Split(@GroupsList, ',') WHERE value <> ''
+),
+MatterSplitTbl AS (
+    SELECT value FROM dbo.fn_Split(@MattersList, ',') WHERE value <> ''
+),
+ActivitySplitTbl AS (
+    SELECT value FROM dbo.fn_Split(@ActivitiesList, ',') WHERE value <> ''
+)
+
+-- Final Select
+SELECT 
+    TimeSheet.ID AS ID,
+    Activities.ID AS ActivityID,
+    ISNULL(Activities_Name, '') AS ActivityName,
+    Activities_Active AS ActivityISActive,
+    (
+        SELECT TOP 1 AdministratorSettings_NumberOfMinutes 
+        FROM dbo.AdministratorSettings
+    ) AS NumberOfMinutes,
+    Clients.ID AS ClientID,
+    ISNULL(Clients_ClientName, '') AS ClientName,
+    Clients_ClientCode AS ClientCode,
+    Clients_ClientStatuses_ID AS ClientStatusID,
+    Clients_ClientActive AS ClientIsActive,
+    Clients_ClientTracking AS ClientTracking,
+    ISNULL(Clients_ClientContactPerson, '') AS ClientContactPerson,
+    ISNULL(Clients_ClientContactPerson1Mobile, '') AS ClientContactPerson1Mobile,
+    ISNULL(Clients_ClientContactPerson1Email, '') AS ClientContactPerson1Email,
+    ISNULL(Clients_ClientAddress, '') AS ClientAddress,
+    ISNULL(Clients_ClientTelephone, '') AS ClientTelephone,
+    ISNULL(Clients_ClientFax, '') AS ClientFax,
+    ISNULL(Clients_ClientWebsite, '') AS ClientWebsite,
+    Matters.ID AS MatterID,
+    ISNULL(Matters_Name, '') AS MatterName,
+    Matters_MatterCode AS MatterCode,
+    Groups_GroupName AS GroupName,
+    Groups_GroupActive AS GroupIsActive,
+    CAST(CONVERT(DATE, TimeSheet.TimeSheet_Date, 103) AS DATETIME) AS TimeSheetDate,
+		CAST(TimeSheet_TimeDuration AS FLOAT) AS TimeDuration,
+    TimeSheet_Hours AS TimeSheetHours,
+    TimeSheet_Cost AS TimeSheetCost,
+    TimeSheet_TimeSheetStatuses_ID AS TimeSheetStatusID,
+    TimeSheet_BillingStatuses_ID AS BillingStatusID,
+    Matters.Matters_MatterStatuses_ID AS MatterStatusID,
+    ISNULL(TimeSheet_Comments, '') AS Comments,
+    TimeSheet_Active AS TimeSheetISActive,
+    ISNULL(TimeSheet_AttName, '') AS AttName,
+    TimeSheetStatuses_Name AS TimeSheetStatus,
+    BillingStatuses_Name AS BillingStatus,
+    MatterStatuses_Name AS MatterStatus,
+    ISNULL(Users_DisplayName, '') AS DisplayName,
+    ISNULL(Users_ADUserName, '') AS ADUserName,
+    Users_CostPerTimeUnit AS CostPerTimeUnit,
+    Users_IsSuperAdmin AS IsSuperAdmin,
+    Users_Useractive AS UserISActive,
+    Users_UserLevels_ID AS UserLevelID,
+    ISNULL(Users_Email, '') AS Email,
+    Clients.Clients_PaymentsType_ID AS PaymetType,
+    CAST(ISNULL(Users_CostPerTimeUnit, 0) AS NUMERIC(18, 2)) AS Rating,
+    ISNULL(TimeSheet_Cost, 0) AS DailyRating,
+    ISNULL(Users_CostPerTimeUnit, 0) AS HourlyRating,
+    CAST(CONVERT(DATE, TimeSheet.TimeSheet_Date, 103) AS DATETIME) AS InvoiceDate
+FROM TimeSheet
+LEFT JOIN TimeSheetStatuses ON TimeSheet_TimeSheetStatuses_ID = TimeSheetStatuses.ID
+LEFT JOIN BillingStatuses ON TimeSheet_BillingStatuses_ID = BillingStatuses.ID
+LEFT JOIN Clients ON TimeSheet.TimeSheet_Clients_ID = Clients.ID
+LEFT JOIN Matters ON TimeSheet.TimeSheet_Matters_ID = Matters.ID
+LEFT JOIN MatterStatuses ON Matters.Matters_MatterStatuses_ID = MatterStatuses.ID
+LEFT JOIN Activities ON TimeSheet.TimeSheet_Activity_ID = Activities.ID
+LEFT JOIN Users ON TimeSheet.TimeSheet_Users_ID = Users.ID
+LEFT JOIN ClientGroups ON TimeSheet.TimeSheet_Clients_ID = ClientGroups.ClientGroups_Clients_ID
+LEFT JOIN Groups ON ClientGroups_Groups_ID = Groups.ID
+WHERE
+    (TimeSheet.TimeSheet_Clients_ID IN (SELECT value FROM ClientSplitTbl) OR @ClientsList = '') AND
+    (TimeSheet.TimeSheet_Matters_ID IN (SELECT value FROM MatterSplitTbl) OR @MattersList = '') AND
+    (TimeSheet.TimeSheet_Activity_ID IN (SELECT value FROM ActivitySplitTbl) OR @ActivitiesList = '') AND
+    (ClientGroups.ClientGroups_Groups_ID IN (SELECT value FROM GroupSplitTbl) OR @GroupsList = '') AND
+    (TimeSheet.TimeSheet_Users_ID IN (SELECT value FROM UserSplitTbl) OR @usersList = '') AND
+    (TimeSheet.TimeSheet_Date >= TRY_CAST(@dateFrom AS DATETIME) OR @dateFrom = '') AND
+    (TimeSheet.TimeSheet_Date <= TRY_CAST(@dateTo AS DATETIME) OR @dateTo = '') AND
+    TimeSheet.TimeSheet_Active = 1 AND
+    Clients.Clients_ClientActive = 1 AND
+    (TimeSheet_TimeSheetStatuses_ID = @TimeSheetStatus OR @TimeSheetStatus IS NULL) AND
+    (TimeSheet_BillingStatuses_ID = @BillingStatus OR @BillingStatus IS NULL) AND
+    (Matters_MatterStatuses_ID = @MatterStatus OR @MatterStatus IS NULL) AND
+    (Clients.Clients_ClientStatuses_ID = @ClientStatus OR @ClientStatus IS NULL) AND
+    (Clients.Clients_PaymentsType_ID = @PaymentType OR @PaymentType IS NULL)
+ORDER BY TimeSheetDate;

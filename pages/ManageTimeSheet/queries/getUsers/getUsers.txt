@@ -1,0 +1,1 @@
+SELECT ID, Users_DisplayName,Users_CostPerTimeUnit FROM dbo.Users ORDER BY Users_DisplayName;

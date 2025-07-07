@@ -1,0 +1,11 @@
+{
+  "gitSyncId": "682c3f379fbebc47e63ede10_93fc719d-9299-4901-8436-c3adfdb649f6",
+  "id": "ManageTimeSheet_attorneyDropDownList",
+  "unpublishedCollection": {
+    "name": "attorneyDropDownList",
+    "pageId": "ManageTimeSheet",
+    "pluginId": "js-plugin",
+    "pluginType": "JS",
+    "variables": []
+  }
+}

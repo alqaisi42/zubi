@@ -1,0 +1,12 @@
+SELECT TOP 1
+  U.ID,
+  U.Users_DisplayName,
+  ISNULL(MR.MatterRatings_HourlyRating, U.Users_CostPerTimeUnit) AS ResolvedCost
+FROM dbo.Users U
+LEFT JOIN (
+  SELECT TOP 1 MatterRatings_Users_ID, MatterRatings_HourlyRating
+  FROM MatterRatings
+  WHERE MatterRatings_Users_ID = {{ usersDropDown.selectedOptionValue }}
+    AND MatterRatings_Matters_ID = {{ MatterDropDown.selectedOptionValue }}
+) MR ON MR.MatterRatings_Users_ID = U.ID
+WHERE U.ID = {{ usersDropDown.selectedOptionValue }};

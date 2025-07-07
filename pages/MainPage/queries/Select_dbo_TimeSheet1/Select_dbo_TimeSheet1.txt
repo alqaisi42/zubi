@@ -1,0 +1,10 @@
+SELECT
+  *
+FROM
+  dbo.TimeSheet
+ORDER BY
+  {{Table1.sortOrder.column || 'ID'}} {{Table1.sortOrder.order !== "desc" ? "" : "DESC"}}
+OFFSET
+  {{Table1.pageOffset}} ROWS
+FETCH NEXT
+  {{Table1.pageSize}} ROWS ONLY

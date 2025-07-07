@@ -1,0 +1,1 @@
+SELECT ID, Clients_ClientName FROM dbo.Clients ORDER BY Clients_ClientName;

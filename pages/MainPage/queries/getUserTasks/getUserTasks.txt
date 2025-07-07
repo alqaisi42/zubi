@@ -1,0 +1,2 @@
+SELECT * FROM dbo.TimeSheet
+WHERE TimeSheet_Users_ID = {{ appsmith.store.currentUser.ID }};

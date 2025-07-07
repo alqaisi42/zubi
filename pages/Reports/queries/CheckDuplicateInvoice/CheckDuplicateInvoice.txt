@@ -1,0 +1,35 @@
+-- CheckDuplicateInvoice
+DECLARE 
+  @InvoiceNumber NVARCHAR(50) = '{{ invoiceFiled.text.trim() }}',
+  @InvoiceDate NVARCHAR(50) = '{{ moment().format("YYYY-MM-DD HH:mm") }}',
+  @InvoiceMatterID INT = {{ MattersMultiSelect.selectedOptionValues[0] || 0 }},
+  @InvoiceClientID INT = {{ ClientsMultiSelect.selectedOptionValues[0] || 0 }},
+  @TimesheetID NVARCHAR(4000) = '{{ invoiceTable.tableData.map(row => row.ID).join(",") }}';
+
+-- Temp table to hold timesheet IDs
+IF OBJECT_ID('tempdb..#TimeSheetIDTbl') IS NOT NULL DROP TABLE #TimeSheetIDTbl;
+
+CREATE TABLE #TimeSheetIDTbl (value NVARCHAR(50));
+
+INSERT INTO #TimeSheetIDTbl
+SELECT value FROM dbo.fn_Split(@TimesheetID, ',') WHERE value <> '';
+
+-- Check for duplicates
+IF EXISTS (
+	SELECT 1 
+	FROM Invoices i
+	JOIN InvoiceDetails d ON d.InvoiceDetails_Invoices_ID = i.ID
+	WHERE i.Invoices_Number = @InvoiceNumber
+	  AND i.Invoices_Clients_ID = @InvoiceClientID
+	  AND i.Invoices_Matter_ID = @InvoiceMatterID
+	  AND CAST(i.Invoices_Date AS DATE) = CAST(@InvoiceDate AS DATE)
+	  AND EXISTS (
+		  SELECT 1 FROM #TimeSheetIDTbl ts
+		  WHERE CAST(ts.value AS INT) = d.InvoiceDetails_TimeSheet_ID
+	  )
+)
+	SELECT 1 AS IsDuplicate;
+ELSE
+	SELECT 0 AS IsDuplicate;
+
+DROP TABLE #TimeSheetIDTbl;

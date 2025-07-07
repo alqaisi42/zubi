@@ -1,0 +1,11 @@
+{
+  "gitSyncId": "682f21b17162c93551de171a_5c3a8d48-4054-4ae2-9f26-5649e9101c35",
+  "id": "ManageTimeSheet_getAttorneyRate",
+  "unpublishedCollection": {
+    "name": "getAttorneyRate",
+    "pageId": "ManageTimeSheet",
+    "pluginId": "js-plugin",
+    "pluginType": "JS",
+    "variables": []
+  }
+}

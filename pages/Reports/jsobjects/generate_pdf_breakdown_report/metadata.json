@@ -1,0 +1,11 @@
+{
+  "gitSyncId": "682f21b17162c93551de171a_875acddd-99d8-4bc4-8d67-15a4a1e4e51a",
+  "id": "Reports_generate_pdf_breakdown_report",
+  "unpublishedCollection": {
+    "name": "generate_pdf_breakdown_report",
+    "pageId": "Reports",
+    "pluginId": "js-plugin",
+    "pluginType": "JS",
+    "variables": []
+  }
+}

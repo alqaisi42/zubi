@@ -1,0 +1,1 @@
+INSERT INTO dbo.Matters (Matters_Name,Matters_MatterCode,Matters_PaymentType_ID,Matters_MatterStatuses_ID,Matters_Clients_ID) VALUES ('{{(Table1.newRow || {}).Matters_Name}}','{{(Table1.newRow || {}).Matters_MatterCode}}','{{(Table1.newRow || {}).Matters_PaymentType_ID}}','{{(Table1.newRow || {}).Matters_MatterStatuses_ID}}','{{(Table1.newRow || {}).Matters_Clients_ID}}')

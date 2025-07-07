@@ -1,0 +1,11 @@
+{
+  "gitSyncId": "6840178db39bf44c84766bcc_c8f4f6ea-f551-4222-99dd-111eaf2902be",
+  "id": "InvoiceDetails_getCostText",
+  "unpublishedCollection": {
+    "name": "getCostText",
+    "pageId": "InvoiceDetails",
+    "pluginId": "js-plugin",
+    "pluginType": "JS",
+    "variables": []
+  }
+}

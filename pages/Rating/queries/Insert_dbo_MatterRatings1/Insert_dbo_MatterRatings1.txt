@@ -1,0 +1,1 @@
+INSERT INTO dbo.MatterRatings (MatterRatings_Users_ID,MatterRatings_HourlyRating) VALUES ('{{(Table2.newRow || {}).MatterRatings_Users_ID}}','{{(Table2.newRow || {}).MatterRatings_HourlyRating}}')

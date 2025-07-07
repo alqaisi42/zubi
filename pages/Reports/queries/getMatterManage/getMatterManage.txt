@@ -1,0 +1,10 @@
+SELECT
+  ID,
+  Matters_Name,
+  Matters_MatterCode
+FROM
+  dbo.Matters
+WHERE
+  Matters_Clients_ID IN ({{ (appsmith.store.selectedClients || []).join(',') || 'NULL' }})
+ORDER BY
+  Matters_Name

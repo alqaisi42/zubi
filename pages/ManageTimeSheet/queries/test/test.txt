@@ -1,0 +1,25 @@
+SELECT
+  T.*,
+  C.Clients_ClientName AS ClientName,
+  M.Matters_Name AS MatterName,
+  A.Activities_Name AS ActivityName,
+  TS.TimeSheetStatuses_Name AS TimeSheetStatus,
+  U.Users_DisplayName AS UserName,
+  B.BillingStatuses_Name AS BillingStatus
+FROM
+  dbo.TimeSheet T
+LEFT JOIN dbo.Clients C ON T.TimeSheet_Clients_ID = C.ID
+LEFT JOIN dbo.Matters M ON T.TimeSheet_Matters_ID = M.ID
+LEFT JOIN dbo.Activities A ON T.TimeSheet_Activity_ID = A.ID
+LEFT JOIN dbo.TimeSheetStatuses TS ON T.TimeSheet_TimeSheetStatuses_ID = TS.ID
+LEFT JOIN dbo.Users U ON T.TimeSheet_Users_ID = U.ID
+LEFT JOIN dbo.BillingStatuses B ON T.TimeSheet_BillingStatuses_ID = B.ID
+WHERE 1 = 1
+  {{ ClientDropDown.selectedOptionValue ? 'AND C.ID = ' + ClientDropDown.selectedOptionValue : '' }}
+  {{ usersDropDown.selectedOptionValue ? 'AND U.ID = ' + usersDropDown.selectedOptionValue : '' }}
+  {{ MatterDropDown.selectedOptionValue ? 'AND M.ID = ' + MatterDropDown.selectedOptionValue : '' }}
+
+ORDER BY
+  {{ filteredTimeSheets.sortOrder.column || 'T.ID' }} {{ filteredTimeSheets.sortOrder.order !== "desc" ? "" : "DESC" }}
+OFFSET {{ filteredTimeSheets.pageOffset }} ROWS
+FETCH NEXT {{ filteredTimeSheets.pageSize }} ROWS ONLY;

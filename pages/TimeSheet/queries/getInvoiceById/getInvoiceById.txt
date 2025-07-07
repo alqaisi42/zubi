@@ -1,0 +1,18 @@
+SELECT
+    Invoices.ID AS ID,
+    Invoices_Number AS InvoiceNumber,
+    Invoices_Date AS InvoiceDate,
+    Clients_ClientName AS ClientName,
+    Matters_Name AS MatterName,
+    Matters_MatterCode AS MatterCode,
+    Invoice_DiscountValue AS Discount,
+    Invoice_Currencies_ID AS CurrencyID,
+    Currencies_Name AS Currency,
+    Currencies_Symbol AS CurrencySymbol,
+    Currencies_ExchangeRate AS ExchangeRate,
+    Clients.ID AS ClientID
+FROM Invoices
+INNER JOIN Clients ON (Invoices.Invoices_Clients_ID = Clients.ID)
+INNER JOIN Matters ON (Invoices.Invoices_Matter_ID = Matters.ID)
+INNER JOIN Currencies ON (Invoice_Currencies_ID = Currencies.ID)
+WHERE Invoices.ID = {{ 174 }}

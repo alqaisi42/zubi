@@ -1,0 +1,42 @@
+{
+  "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
+  "bottomRow": 37,
+  "bottomRowBeforeCollapse": 37,
+  "counterClosewise": false,
+  "dynamicBindingPathList": [
+    {
+      "key": "borderRadius"
+    }
+  ],
+  "dynamicTriggerPathList": [],
+  "fillColor": "#a21d31",
+  "isCanvas": false,
+  "isIndeterminate": false,
+  "isLoading": false,
+  "isVisible": false,
+  "key": "vhp6ifw1o2",
+  "leftColumn": 15,
+  "mobileBottomRow": 50,
+  "mobileLeftColumn": 19,
+  "mobileRightColumn": 47,
+  "mobileTopRow": 46,
+  "needsErrorInfo": false,
+  "originalBottomRow": 37,
+  "originalTopRow": 33,
+  "parentColumnSpace": 11.7607421875,
+  "parentId": "40jsyywmug",
+  "parentRowSpace": 10,
+  "progress": 50,
+  "progressType": "circular",
+  "renderMode": "CANVAS",
+  "responsiveBehavior": "fill",
+  "rightColumn": 50,
+  "showResult": false,
+  "steps": 1,
+  "topRow": 33,
+  "topRowBeforeCollapse": 33,
+  "type": "PROGRESS_WIDGET",
+  "version": 1,
+  "widgetId": "h9as6bhhh6",
+  "widgetName": "loginProgress"
+}

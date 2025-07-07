@@ -1,0 +1,11 @@
+{
+  "gitSyncId": "682f21b17162c93551de171a_3da47911-4e86-4797-9805-bb374e254ec4",
+  "id": "ManageTimeSheet_selectRowController",
+  "unpublishedCollection": {
+    "name": "selectRowController",
+    "pageId": "ManageTimeSheet",
+    "pluginId": "js-plugin",
+    "pluginType": "JS",
+    "variables": []
+  }
+}

@@ -1,0 +1,9 @@
+SELECT
+  U.*,
+  L.UserLevels_Name AS UserLevelName
+FROM
+  dbo.Users AS U
+LEFT JOIN dbo.UserLevels AS L ON U.Users_UserLevels_ID = L.ID
+ORDER BY
+  {{ usersTableView.sortOrder.column || 'U.ID' }} {{ usersTableView.sortOrder.order !== "desc" ? "" : "DESC" }}
+

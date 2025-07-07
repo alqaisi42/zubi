@@ -1,0 +1,11 @@
+{
+  "gitSyncId": "682c3f379fbebc47e63ede10_2a3d24af-bc73-4c81-8b61-80c1d9032f6e",
+  "id": "Lawyers_DeleteSelectedUser",
+  "unpublishedCollection": {
+    "name": "DeleteSelectedUser",
+    "pageId": "Lawyers",
+    "pluginId": "js-plugin",
+    "pluginType": "JS",
+    "variables": []
+  }
+}

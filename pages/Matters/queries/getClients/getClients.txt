@@ -1,0 +1,5 @@
+SELECT 
+  ID AS value, 
+  Clients_ClientName AS label 
+FROM [ZubiTimeSheet].[dbo].[Clients]
+ORDER BY Clients_ClientName;

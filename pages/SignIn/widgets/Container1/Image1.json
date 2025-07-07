@@ -1,0 +1,41 @@
+{
+  "animateLoading": true,
+  "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
+  "bottomRow": 12,
+  "boxShadow": "none",
+  "defaultImage": "https://www.legal500.com/wp-content/uploads/sites/13/2023/04/ZUBI-LOGO@2x-100-300x300.jpg?v=1680689857",
+  "dynamicBindingPathList": [
+    {
+      "key": "borderRadius"
+    }
+  ],
+  "dynamicTriggerPathList": [],
+  "enableDownload": false,
+  "enableRotation": false,
+  "flexVerticalAlignment": "start",
+  "image": "",
+  "imageShape": "RECTANGLE",
+  "isLoading": false,
+  "isVisible": true,
+  "key": "lwqgauwe6t",
+  "leftColumn": 24,
+  "maxZoomLevel": 1,
+  "mobileBottomRow": 33,
+  "mobileLeftColumn": 25,
+  "mobileRightColumn": 37,
+  "mobileTopRow": 21,
+  "needsErrorInfo": false,
+  "objectFit": "cover",
+  "originalBottomRow": 21,
+  "originalTopRow": 9,
+  "parentColumnSpace": 20.125,
+  "parentId": "40jsyywmug",
+  "parentRowSpace": 10,
+  "renderMode": "CANVAS",
+  "rightColumn": 40,
+  "topRow": 5,
+  "type": "IMAGE_WIDGET",
+  "version": 1,
+  "widgetId": "j4318qk4vw",
+  "widgetName": "Image1"
+}

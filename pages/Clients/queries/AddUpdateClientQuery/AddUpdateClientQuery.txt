@@ -1,0 +1,20 @@
+DECLARE @Result INT;
+
+EXEC @Result = dbo.spr_AddUpdateClients
+    @ClientID = {{ clientTable.selectedRow?.ID || 'NULL' }},
+    @ClientName = '{{ clientName.text.trim().replace("'", "''") }}',
+    @ClientCode = {{ ClientCode.text.trim() || 'NULL' }},
+    @ClientStatus = {{ ClientStatus.selectedOptionValue || 'NULL' }},
+    @ClientContactPerson = '{{ ClientContactPerson.text?.replace("'", "''") || '' }}',
+    @ClientContactPersonMobile = '{{ ClientContactPersonMobile.text?.replace("'", "''") || '' }}',
+    @ClientContactPersonEmail = '{{ ClientContactPersonEmail.text?.replace("'", "''") || '' }}',
+    @ClientAddress = '{{ ClientAddress.text?.replace("'", "''") || '' }}',
+    @ClientTelephone = '{{ ClientTelephone.text?.replace("'", "''") || '' }}',
+    @ClientFax = '{{ ClientFax.text?.replace("'", "''") || '' }}',
+    @ClientWebsite = NULL,
+    @ClientTracking = 1,
+    @PaymentsTypeID = {{ PaymentsType.selectedOptionValue || 'NULL' }},
+    @CurrencyID = {{ Currency.selectedOptionValue || 'NULL' }},
+    @ContractValue = {{ rateValue.text.trim() || '0' }};
+
+SELECT @Result AS Result;

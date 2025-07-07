@@ -1,0 +1,11 @@
+{
+  "gitSyncId": "6840178db39bf44c84766bcc_c1af8cb3-ac84-47cd-bca9-c025cbc27511",
+  "id": "Reports_addIvoiceJs",
+  "unpublishedCollection": {
+    "name": "addIvoiceJs",
+    "pageId": "Reports",
+    "pluginId": "js-plugin",
+    "pluginType": "JS",
+    "variables": []
+  }
+}

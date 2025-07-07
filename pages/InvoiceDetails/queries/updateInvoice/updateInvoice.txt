@@ -1,0 +1,87 @@
+-- Simulate Appsmith inputs
+DECLARE 
+  @InvoiceID       INT            = {{ Invoice_Header.selectedRow.ID }},
+  @InvoiceNumber   NVARCHAR(50)   = '{{ invoiceFiled.text.trim() }}',
+  @InvoiceDate     NVARCHAR(50)   = '{{ Invoice_Header.selectedRow.InvoiceDate }}',
+  @TimesheetID     NVARCHAR(4000) = '{{ Full_Details_of_Included_Times.selectedRows.map(row => row.ID).join(",") }}',
+  @ExpensesValues  NVARCHAR(4000) = '',
+  @AmountValues    NVARCHAR(4000) = '{{ totalCost.text }}',
+  @DiscountValue   FLOAT          = 0,
+  @Currency        INT            = 83;
+
+-- Output tracking
+DECLARE @RETVALUE INT;
+DECLARE @AffectedRows INT = 0;
+
+-- Temp tables
+IF OBJECT_ID('tempdb..#ExpensesSplitTbl') IS NOT NULL DROP TABLE #ExpensesSplitTbl;
+IF OBJECT_ID('tempdb..#AmountSplitTbl') IS NOT NULL DROP TABLE #AmountSplitTbl;
+IF OBJECT_ID('tempdb..#TimeSheetIDTbl') IS NOT NULL DROP TABLE #TimeSheetIDTbl;
+
+CREATE TABLE #ExpensesSplitTbl (counter INT IDENTITY(1,1), value NVARCHAR(300));
+CREATE TABLE #AmountSplitTbl (counter INT IDENTITY(1,1), value NVARCHAR(50));
+CREATE TABLE #TimeSheetIDTbl (counter INT IDENTITY(1,1), value NVARCHAR(50));
+
+BEGIN TRY
+  BEGIN TRANSACTION;
+
+  -- 1. Update Invoice header
+  UPDATE Invoices
+  SET 
+    Invoices_Number = @InvoiceNumber,
+    Invoices_Date = CAST(@InvoiceDate AS DATETIME),
+    Invoice_DiscountValue = @DiscountValue,
+    Invoice_Currencies_ID = @Currency
+  WHERE ID = @InvoiceID;
+
+  SET @AffectedRows += @@ROWCOUNT;
+
+  -- 2. Refresh Timesheet links
+  DELETE FROM InvoiceDetails WHERE InvoiceDetails_Invoices_ID = @InvoiceID;
+
+  INSERT INTO #TimeSheetIDTbl 
+  SELECT value FROM dbo.fn_Split(@TimesheetID, ',') WHERE value <> '';
+
+  INSERT INTO InvoiceDetails (InvoiceDetails_Invoices_ID, InvoiceDetails_TimeSheet_ID)
+  SELECT @InvoiceID, CAST(value AS INT) FROM #TimeSheetIDTbl;
+
+  SET @AffectedRows += @@ROWCOUNT;
+
+  -- 3. Refresh Expenses
+  DELETE FROM InvoiceExpenses WHERE InvoiceExpenses_Invoices_ID = @InvoiceID;
+
+  IF @ExpensesValues IS NOT NULL AND @ExpensesValues <> ''
+     AND @AmountValues IS NOT NULL AND @AmountValues <> ''
+  BEGIN
+    INSERT INTO #ExpensesSplitTbl 
+    SELECT value FROM dbo.fn_Split(@ExpensesValues, ',');
+
+    INSERT INTO #AmountSplitTbl 
+    SELECT value FROM dbo.fn_Split(@AmountValues, ',');
+
+    INSERT INTO InvoiceExpenses (InvoiceExpenses_Invoices_ID, InvoiceExpenses_ExpenseName, InvoiceExpenses_Amount)
+    SELECT @InvoiceID, e.value, CAST(a.value AS FLOAT)
+    FROM #ExpensesSplitTbl e
+    JOIN #AmountSplitTbl a ON e.counter = a.counter;
+
+    SET @AffectedRows += @@ROWCOUNT;
+  END;
+
+  COMMIT;
+  SET @RETVALUE = 1;
+
+END TRY
+BEGIN CATCH
+  ROLLBACK;
+  SET @RETVALUE = 0;
+  SET @AffectedRows = 0;
+  THROW;
+END CATCH;
+
+-- Clean up
+DROP TABLE #ExpensesSplitTbl;
+DROP TABLE #AmountSplitTbl;
+DROP TABLE #TimeSheetIDTbl;
+
+-- Final return
+SELECT @RETVALUE AS ReturnValue, @AffectedRows AS AffectedRows;

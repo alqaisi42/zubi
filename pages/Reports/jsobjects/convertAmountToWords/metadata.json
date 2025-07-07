@@ -1,0 +1,11 @@
+{
+  "gitSyncId": "6840178db39bf44c84766bcc_5fc43a7c-30c4-4b42-bd8d-5cabfd9caec7",
+  "id": "Reports_convertAmountToWords",
+  "unpublishedCollection": {
+    "name": "convertAmountToWords",
+    "pageId": "Reports",
+    "pluginId": "js-plugin",
+    "pluginType": "JS",
+    "variables": []
+  }
+}

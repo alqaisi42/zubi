@@ -1,0 +1,45 @@
+{
+  "animateLoading": true,
+  "bottomRow": 124,
+  "bottomRowBeforeCollapse": 147,
+  "docUrl": "{{ appsmith.store.pdfDataUri }}",
+  "dynamicBindingPathList": [
+    {
+      "key": "docUrl"
+    },
+    {
+      "key": "isVisible"
+    }
+  ],
+  "dynamicPropertyPathList": [
+    {
+      "key": "isVisible"
+    }
+  ],
+  "dynamicTriggerPathList": [],
+  "flexVerticalAlignment": "start",
+  "isCanvas": false,
+  "isLoading": false,
+  "isVisible": "{{appsmith.store.pdfBase64 != null}}",
+  "key": "zqsdv5t1et",
+  "leftColumn": 0,
+  "mobileBottomRow": 63,
+  "mobileLeftColumn": 6,
+  "mobileRightColumn": 30,
+  "mobileTopRow": 23,
+  "needsErrorInfo": false,
+  "originalBottomRow": 147,
+  "originalTopRow": 28,
+  "parentColumnSpace": 17.5625,
+  "parentId": "y8cs81z5xu",
+  "parentRowSpace": 10,
+  "renderMode": "CANVAS",
+  "responsiveBehavior": "fill",
+  "rightColumn": 64,
+  "topRow": 5,
+  "topRowBeforeCollapse": 28,
+  "type": "DOCUMENT_VIEWER_WIDGET",
+  "version": 1,
+  "widgetId": "oki3k7pypc",
+  "widgetName": "pdf_viewCopy"
+}

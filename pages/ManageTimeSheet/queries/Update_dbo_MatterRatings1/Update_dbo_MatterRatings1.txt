@@ -1,0 +1,16 @@
+IF EXISTS (
+  SELECT 1 FROM dbo.MatterRatings
+  WHERE MatterRatings_Users_ID = '{{ usersDropDown.selectedOptionValue }}'
+    AND MatterRatings_Matters_ID = '{{ MatterDropDown.selectedOptionValue }}'
+)
+BEGIN
+  UPDATE dbo.MatterRatings 
+  SET MatterRatings_HourlyRating = '{{ Table2.updatedRow.HourlyRating }}'
+  WHERE MatterRatings_Users_ID = '{{ usersDropDown.selectedOptionValue }}' 
+    AND MatterRatings_Matters_ID = '{{ MatterDropDown.selectedOptionValue }}';
+END
+ELSE
+BEGIN
+  INSERT INTO dbo.MatterRatings (MatterRatings_Users_ID, MatterRatings_Matters_ID, MatterRatings_HourlyRating)
+  VALUES ('{{ usersDropDown.selectedOptionValue }}', '{{ MatterDropDown.selectedOptionValue }}', '{{ Table2.updatedRow.HourlyRating }}');
+END

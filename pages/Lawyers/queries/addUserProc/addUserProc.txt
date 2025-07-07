@@ -1,0 +1,18 @@
+INSERT INTO dbo.Users (
+  Users_DisplayName,
+  Users_ADUserName,
+  Users_CostPerTimeUnit,
+  Users_Email,
+  Users_IsSuperAdmin,
+  Users_UserLevels_ID
+)
+VALUES (
+  '{{ input_DisplayName.text }}',
+  '{{ input_ADUserName.text }}',
+  {{ input_CostPerTimeUnit.text }},
+  '{{ input_Email.text }}',
+  {{ Switch_IsSupervisor.isSwitchedOn ? 1 : 0 }},
+  1
+);
+
+SELECT 1 AS result;  -- 👈 This ensures Appsmith gets a return value

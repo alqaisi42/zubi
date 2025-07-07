@@ -1,0 +1,68 @@
+-- Declare input parameters
+DECLARE 
+ @ClientsList VARCHAR(8000) = '{{ ClientsMultiSelect.selectedOptionValues.join(",") }}',
+    @usersList VARCHAR(8000) = '{{ attorneyDropDownList.selectedOptionValue || "" }}',
+    @GroupsList VARCHAR(8000) = '',
+    @MattersList VARCHAR(8000) = '{{ MattersMultiSelect.selectedOptionValues.join(",") }}',
+    @ActivitiesList VARCHAR(8000) = '',
+    @ClientStatus INT = NULL,
+    @TimeSheetStatus INT = {{ timeSheetStatus.selectedOptionValue || 'NULL' }},
+    @BillingStatus INT = {{ BillingStatus.selectedOptionValue || 'NULL' }},
+    @MatterStatus INT = NULL,
+    @dateFrom NVARCHAR(50) = '{{ Checkbox1.isChecked ? "" : Input_TimeSheetDate.selectedDate }}',
+    @dateTo NVARCHAR(50) = '{{ Checkbox1.isChecked ? "" : DateTo.selectedDate }}',
+    @PaymentType INT = NULL;
+
+-- Split comma-separated lists using your existing function
+WITH 
+ClientSplitTbl AS (
+    SELECT value FROM dbo.fn_Split(@ClientsList, ',') WHERE value <> ''
+),
+UserSplitTbl AS (
+    SELECT value FROM dbo.fn_Split(@usersList, ',') WHERE value <> ''
+),
+GroupSplitTbl AS (
+    SELECT value FROM dbo.fn_Split(@GroupsList, ',') WHERE value <> ''
+),
+MatterSplitTbl AS (
+    SELECT value FROM dbo.fn_Split(@MattersList, ',') WHERE value <> ''
+),
+ActivitySplitTbl AS (
+    SELECT value FROM dbo.fn_Split(@ActivitiesList, ',') WHERE value <> ''
+)
+
+-- Summary Result
+SELECT 
+    SUM(CAST(ISNULL(TimeSheet_TimeDuration, '0') AS NUMERIC(18, 2))) AS TotalDuration,
+    MAX(ISNULL(ClientRatings.ClientRatings_DailyRating, 0)) AS DailyRating,
+    MAX(ISNULL(ClientRatings.ClientRatings_HourlyRating, 0)) AS HourlyRating,
+    SUM(CAST(ISNULL(ClientRatings_DailyRating, 0) AS NUMERIC(18, 2))) + 
+    SUM(CAST(ISNULL(ClientRatings_HourlyRating, 0) AS NUMERIC(18, 2))) AS TotalRating,
+    SUM(CAST(ISNULL(TimeSheet_TimeDuration, '0') AS NUMERIC(18, 2)) * 
+        (CAST(ISNULL(ClientRatings_DailyRating, 0) AS NUMERIC(18, 2)) + 
+         CAST(ISNULL(ClientRatings_HourlyRating, 0) AS NUMERIC(18, 2)))) AS TotalAmount
+
+FROM TimeSheet
+LEFT JOIN Clients ON TimeSheet.TimeSheet_Clients_ID = Clients.ID 
+LEFT JOIN Matters ON TimeSheet.TimeSheet_Matters_ID = Matters.ID 
+LEFT JOIN Activities ON TimeSheet.TimeSheet_Activity_ID = Activities.ID 
+LEFT JOIN Users ON TimeSheet.TimeSheet_Users_ID = Users.ID 
+LEFT JOIN ClientGroups ON TimeSheet.TimeSheet_Clients_ID = ClientGroups.ClientGroups_Clients_ID 
+LEFT JOIN ClientRatings ON 
+    TimeSheet.TimeSheet_Clients_ID = ClientRatings_Clients_ID AND 
+    TimeSheet.TimeSheet_Users_ID = ClientRatings_Users_ID
+WHERE
+    (TimeSheet.TimeSheet_Clients_ID IN (SELECT value FROM ClientSplitTbl) OR @ClientsList = '') AND
+    (TimeSheet.TimeSheet_Matters_ID IN (SELECT value FROM MatterSplitTbl) OR @MattersList = '') AND
+    (TimeSheet.TimeSheet_Activity_ID IN (SELECT value FROM ActivitySplitTbl) OR @ActivitiesList = '') AND
+    (ClientGroups.ClientGroups_Groups_ID IN (SELECT value FROM GroupSplitTbl) OR @GroupsList = '') AND
+    (TimeSheet.TimeSheet_Users_ID IN (SELECT value FROM UserSplitTbl) OR @usersList = '') AND
+    (TimeSheet.TimeSheet_Date >= TRY_CAST(@dateFrom AS DATETIME) OR @dateFrom = '') AND
+    (TimeSheet.TimeSheet_Date <= TRY_CAST(@dateTo AS DATETIME) OR @dateTo = '') AND
+    TimeSheet.TimeSheet_Active = 1 AND
+    Clients.Clients_ClientActive = 1 AND
+    (TimeSheet_TimeSheetStatuses_ID = @TimeSheetStatus OR @TimeSheetStatus IS NULL) AND
+    (TimeSheet_BillingStatuses_ID = @BillingStatus OR @BillingStatus IS NULL) AND
+    (Matters.Matters_MatterStatuses_ID = @MatterStatus OR @MatterStatus IS NULL) AND
+    (Clients.Clients_ClientStatuses_ID = @ClientStatus OR @ClientStatus IS NULL) AND
+    (Clients.Clients_PaymentsType_ID = @PaymentType OR @PaymentType IS NULL);

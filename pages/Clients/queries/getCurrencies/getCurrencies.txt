@@ -1,0 +1,5 @@
+SELECT 
+  ID AS value,
+  CONCAT(Currencies_Name, ' (', Currencies_Symbol, ')') AS label
+FROM [ZubiTimeSheet].[dbo].[Currencies]
+ORDER BY Currencies_Name;

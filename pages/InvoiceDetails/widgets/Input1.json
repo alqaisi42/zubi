@@ -1,0 +1,63 @@
+{
+  "accentColor": "{{appsmith.theme.colors.primaryColor}}",
+  "animateLoading": true,
+  "autoFocus": false,
+  "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
+  "bottomRow": 93,
+  "bottomRowBeforeCollapse": 93,
+  "boxShadow": "none",
+  "defaultText": "{{ Number((Full_Details_of_Included_Times.selectedRows || [])\n    .reduce((sum, row) => sum + Number(row.TimeSheet_TimeDuration || 0), 0))\n    .toFixed(2) \n}}\n",
+  "dynamicBindingPathList": [
+    {
+      "key": "accentColor"
+    },
+    {
+      "key": "borderRadius"
+    },
+    {
+      "key": "defaultText"
+    }
+  ],
+  "dynamicHeight": "FIXED",
+  "dynamicPropertyPathList": [],
+  "dynamicTriggerPathList": [],
+  "iconAlign": "left",
+  "inputType": "NUMBER",
+  "isDisabled": true,
+  "isLoading": false,
+  "isRequired": false,
+  "isVisible": true,
+  "key": "hx4qyzi0eh",
+  "label": "Total Durations",
+  "labelAlignment": "left",
+  "labelPosition": "Left",
+  "labelStyle": "BOLD",
+  "labelTextSize": "0.875rem",
+  "labelWidth": "6",
+  "leftColumn": 36,
+  "maxDynamicHeight": 9000,
+  "minDynamicHeight": 4,
+  "minWidth": 450,
+  "mobileBottomRow": 141,
+  "mobileLeftColumn": 0,
+  "mobileRightColumn": 20,
+  "mobileTopRow": 134,
+  "needsErrorInfo": false,
+  "originalBottomRow": 93,
+  "originalTopRow": 89,
+  "parentColumnSpace": 20.25,
+  "parentId": "0",
+  "parentRowSpace": 10,
+  "renderMode": "CANVAS",
+  "resetOnSubmit": true,
+  "responsiveBehavior": "fill",
+  "rightColumn": 50,
+  "shouldAllowAutofill": false,
+  "showStepArrows": false,
+  "topRow": 89,
+  "topRowBeforeCollapse": 89,
+  "type": "INPUT_WIDGET_V2",
+  "version": 2,
+  "widgetId": "reujihmdlq",
+  "widgetName": "Input1"
+}

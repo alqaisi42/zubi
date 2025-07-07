@@ -1,0 +1,6 @@
+DECLARE @RC INT;
+
+EXEC @RC = [dbo].[spr_GetInvoices]
+  @InvoiceNumber = {{ "'" + (invoiceNumberInput.text || '') + "'" }},
+  @ClientName    = {{ "'" + (ClientsMultiSelect.selectedOptionLabels[0] || '') + "'" }},
+  @Date          = {{ Checkbox1.isChecked ? "''" : "'" + moment(Input_TimeSheetDate.selectedDate).format("YYYY-MM-DD") + "'" }}

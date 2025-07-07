@@ -1,0 +1,13 @@
+SELECT
+  M.*,
+  C.Clients_ClientName AS ClientName,
+  P.PaymentsType_Type AS PaymentType,
+  S.MatterStatuses_Name AS StatusName
+FROM
+  dbo.Matters M
+LEFT JOIN dbo.Clients C ON M.Matters_Clients_ID = C.ID
+LEFT JOIN dbo.PaymentsType P ON C.Clients_PaymentsType_ID = P.ID
+LEFT JOIN dbo.MatterStatuses S ON M.Matters_MatterStatuses_ID = S.ID
+ORDER BY
+  {{ Table1.sortOrder.column || 'M.ID' }} {{ Table1.sortOrder.order !== "desc" ? "" : "DESC" }}
+

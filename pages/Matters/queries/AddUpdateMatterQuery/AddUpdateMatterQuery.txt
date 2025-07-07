@@ -1,0 +1,9 @@
+DECLARE @Result INT;
+
+EXEC @Result = dbo.spr_AddUpdateMatter
+    @ID = {{ Table1.selectedRow?.ID || 'NULL' }},
+    @Name = '{{ matterName.text.trim().replace("'", "''") }}',
+    @Code = '{{ matterCode.text.trim().replace("'", "''") }}',
+    @ClientID = {{ matterClient.selectedOptionValue || 'NULL' }};
+
+SELECT @Result AS Result;

@@ -1,0 +1,11 @@
+{
+  "gitSyncId": "6840178db39bf44c84766bcc_13a66a3c-dda2-46c4-aa65-d6e4517606aa",
+  "id": "Reports_checkPrintStatus",
+  "unpublishedCollection": {
+    "name": "checkPrintStatus",
+    "pageId": "Reports",
+    "pluginId": "js-plugin",
+    "pluginType": "JS",
+    "variables": []
+  }
+}
