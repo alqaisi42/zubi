@@ -46,7 +46,7 @@
   "isDisabled": "{{appsmith.store.showPrintedInvoice}}",
   "isFilterable": true,
   "isLoading": false,
-  "isRequired": true,
+  "isRequired": false,
   "isVisible": true,
   "key": "ch0he5e5e8",
   "labelAlignment": "left",
