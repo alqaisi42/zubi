@@ -20,7 +20,8 @@ WHERE 1=1
   {{ Select_Matter.selectedOptionValue ? "AND T.TimeSheet_Matters_ID = " + Select_Matter.selectedOptionValue : "" }}
 
 ORDER BY
-  {{ time_sheet_table.sortOrder.column ? time_sheet_table.sortOrder.column : 'T.ID' }} {{ time_sheet_table.sortOrder.order == "desc" ? "DESC" : "ASC" }}
+  {{ time_sheet_table.sortOrder.column ? time_sheet_table.sortOrder.column : 'T.ID' }}   {{ (time_sheet_table.sortOrder.order || 'desc') == 'desc' ? 'DESC' : 'ASC' }}
+
 
 OFFSET {{ (time_sheet_table.pageNo - 1) * time_sheet_table.pageSize }} ROWS
 FETCH NEXT {{ time_sheet_table.pageSize }} ROWS ONLY;
